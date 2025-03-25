@@ -1,7 +1,17 @@
 # Bioinformatics tutorials
-## But with everything you'll need
+## With everything you'll need and more
 
-The purpose of this repository is to provide students with some backgroung in biology an introduction to bioinformatics and a playground environment for hands-on learning. I've compiled tutorials in R (a basic intro as well as a guided tutorial in scRNA-seq data) and Python (NumPy, Pandas, and scikit-bio), as well as all of the packages needed to complete them. 
+The purpose of this repository is to provide students with some background in biology an introduction to bioinformatics and a playground environment for hands-on learning. I've compiled tutorials in R (a basic intro as well as a guided tutorial in scRNA-seq data) and Python (NumPy, Pandas, and scikit-bio), as well as all of the packages needed to complete them as a first version release.
+
+## Why Docker?
+
+In my experience, using standard package management tools (think Python's `pip` or R's `install.packages()`) are easy, but cause a lot of problems as time goes on. Many of these packages are poorly maintained, so they aren't upgraded with their dependencies or the language itself. Eventually, two packages you're trying to use need conflicting versions of something, and everything breaks. Many tools exist to try to solve this, but they have problems too. Conda and its derivatives, for example, have a lot of flaws in their implementation that causes projects to break easily and unexpectedly. Most importantly, they're not reliably reproducible across systems, a necessity in science. The problem becomes a question of how we make our software replicable across any system?
+
+Docker is a tool that packages software as *containers*. Containers are effectively the minimum set of information and instructions needed to tell a computer how to run a given program. The container simulates a base operating system, then installs packages and builds your software in that isolated environment. There are three key components to Docker:
+- **Dockerfile**: A dockerfile is analagous to DNA. It is the source code that contains all of the instructions necessary for the Docker engine to build an image.
+- **Image**: An image is a snapshot of software, files, and dependencies (including the base operating system). The image itself doesn't run any programs; it is an immutable "start point" from which you spin up containers.
+  + In this analogy, building the image is the transcription, translation, and modification steps, producing a functional enzyme. Spinning up a container is then analagous to the enzyme performing its function. ~~(Except that Docker images are immutable and you can start multiple simultaneous containers from the same image, so the analogy kind of breaks down here)~~
+- **Container**: A container is an instance of an image. This means that the programs you specified in the dockerfile and built in the image are actually run in the container. A container is an isolated environment that can run your software on any computer. The parameters you supply to the `docker run` command dictate some features of the container, like what ports or directories the programs can access (which you'll see in this tutorial). 
 
 ## Where do I start?
 
@@ -44,7 +54,7 @@ Alternatively, replace `saramaiah/bioinformatics-tutorials-jupyter-nb:latest` wi
 ```
 docker run -v ./notebooks:/home/jovyan/notebooks -p 8888:8888 bioinfo:latest
 ```
-or your image's ID:
+or your image's ID (this is mine, yours may be different):
 ```
 docker run -v ./notebooks:/home/jovyan/notebooks -p 8888:8888 03c4bead037c
 ```
@@ -62,3 +72,18 @@ After running `docker run`, the terminal should output a lot of stuff, among whi
 You can stop the container from running by pressing `CTRL+C` in the Docker Desktop terminal window. This will shut down the Jupyter server, but it will not delete any **saved** data. If you run `docker image ls` again, you should see your image's name. Running `docker run ...` again will put you right back into the same Jupyter server. 
 
 For more information about managing your images, see [official documentation](https://docs.docker.com/reference/cli/docker/image/).
+
+### Making changes to the Docker image
+
+Docker images themselves are immutable, so in order to make changes to the packages included or run additional programs, you will need to build a new image. This is a bit more of an advanced topic, so I would recommend reading [official documentation](https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/) and finding a tutorial online that speaks to you. 
+
+You can modify the Dockerfile provided, or you can make your own. The basic components of a Dockerfile are: pulling a base image (any image available on Docker Hub can function as your base image), and a set of commands to install packages and run commands that build your software. The basic anatomy of this Dockerfile is annotated via comments. I am not by any means an expert on Dockerfiles, and in general I would recommend pulling an existing image that mostly works rather than building an image entirely from scratch.
+
+## Tutorial documents
+
+I did not write the material contained within the Jupyter notebooks provided, though I did translate the Seurat tutorial from its original R markdown format into the Jupyter format. I have linked the original sources within these documents, and I recommend checking out other work by those authors for additional materials. All of the code blocks should run without any modification, but I would encourage modifying parameters or trying the code with new datasets to get a good understanding of how these functions work and the types of analysis you can perform with them. 
+
+Jupyter notebooks themselves are great for trying things out with small datasets, since you can save the outputs and plots in the same document as your code. One limitation is that it can struggle a bit with large datasets or documents with many plots, particularly if the computer you run it on doesn't have much RAM. You can split a project across multiple documents, but you will need to save workspace objects to disk to use them in multiple notebooks.
+
+
+
