@@ -1,0 +1,9 @@
+services:
+  bioinformatics-tutorials-jupyter-nb:
+    image: saramaiah/bioinformatics-tutorials-jupyter-nb:latest
+    container_name: bioinformatics-tutorials-jupyter-nb
+    user: root
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/jovyan/notebooks
